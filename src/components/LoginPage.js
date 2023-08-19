@@ -1,10 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/BotPlayLanding');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const url = 'http://localhost:3002/logIn';
+      const response = await axios.post(url, { username, password });
+      console.log(response.data.status);
+      if (response.data.status === 'Logged in') {
+        navigate('/BotPlayLanding');
+      } else {
+        setMessage('Incorrect username or password');
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    //navigate('/BotPlayLanding');
+  }
+
+  const handleSignUp = async () => {
+    try {
+      const url = 'http://localhost:3002/createAccount';
+      const response = await axios.post(url, { username, password });
+      console.log(response.data.status);
+      if (response.data.status === 'New account created') {
+        navigate('/BotPlayLanding');
+      } else {
+        setMessage('Username already exists');
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
   return (
     < section >
@@ -22,14 +54,15 @@ const LoginPage = () => {
                 <div className="card-body d-flex flex-column align-items-center">
                   <form className="text-center" method="post">
                     <div className="mb-3"><input className="form-control" type="text"
-                      placeholder="Username" /></div>
+                      placeholder="Username" value={username} onChange={(e) => { setUsername(e.target.value) }} /></div>
                     <div className="mb-3"><input className="form-control" type="password" name="password"
-                      placeholder="Password" /></div>
-                    <div className="mb-3"><button className="btn btn-primary d-block w-100" type='button' onClick={handleClick}
+                      placeholder="Password" value={password} onChange={(e) => { setPassword(e.target.value) }} /></div>
+                    <div className="mb-3"><button className="btn btn-primary d-block w-100" type='button' onClick={handleLogin}
                     >Login</button></div>
-                    <div className="mb-3"><button className="btn btn-primary d-block w-100" type='button'
+                    <div className="mb-3"><button className="btn btn-primary d-block w-100" type='button' onClick={handleSignUp}
                     >Sign
                       up</button></div>
+                    <div>{message}</div>
                   </form>
                 </div>
               </div>

@@ -1,17 +1,44 @@
-import React from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
+import ChessBoard from "./ChessBoard";
 
-const BotPlayLanding = () => {
+const BotPlay = () => {
     const navigate = useNavigate();
+    const defaultState = [13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 4, 2, 3, 5, 6, 3, 2, 4, 13, 13, 1, 1, 1, 1, 1, 1, 1, 1, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 13, 13, 7, 7, 7, 7, 7, 7, 7, 7, 13, 13, 10, 8, 9, 11, 12, 9, 8, 10, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13];
+    const [display, setDisplay] = useState(defaultState);
+    const [ws, setWs] = useState(null);
+
+    const location = useLocation();
+
+    useEffect(() => {
+        let connection = new WebSocket('ws://localhost:3002/chessBot');
+        console.log(location.state);
+        connection.addEventListener('message', (message) => {
+            setDisplay(JSON.parse(message.data).board);
+        })
+
+        setWs(connection);
+        return () => {
+            console.log('component unmounted');
+        }
+    }, []);
+
+
     const navMultiplayer = () => {
         navigate('/MultiplayerLanding');
     }
+
+    //handle game start 
+
+    //initiate server connection
+
     const navLogin = () => {
         navigate('/');
     }
 
-    const navBot = () => {
-        navigate('/BotPlay', { state: 'passing in!' });
+    const handleMove = (move) => {
+        ws.send(JSON.stringify(move));
+
     }
 
     return (
@@ -116,46 +143,11 @@ const BotPlayLanding = () => {
                     </div>
                 </div>
             </div>
-            <div className="container" style={{ marginTop: 100 }}>
-                <div className="row mb-5">
-                    <div className="col-md-8 col-xl-6 text-center mx-auto">
-                        <h2>Play against bot</h2>
-                        <p className="w-lg-50">
-                            Select the difficulty of the bot you want to play against
-                        </p>
-                    </div>
-                </div>
-                <div className="row d-flex justify-content-center">
-                    <div className="col-md-6 col-xl-4">
-                        <div className="card mb-5">
-                            <div className="card-body d-flex flex-column align-items-center">
-                                <form className="text-center" method="post">
-                                    <input
-                                        className="form-range"
-                                        type="range"
-                                        name="difficulty"
-                                        defaultValue={0}
-                                        min={0}
-                                        max={10}
-                                        step={1}
-                                    />
-                                    <div className="mb-3">
-                                        <button
-                                            className="btn btn-primary d-block w-100"
-                                            type="button"
-                                            onClick={navBot}
-                                        >
-                                            Play
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div className="container" style={{ marginTop: 100, display: "flex", justifyContent: "center" }}>
+                <ChessBoard display={display} callback={handleMove} />
             </div>
         </>
     )
 }
 
-export default BotPlayLanding;
+export default BotPlay;

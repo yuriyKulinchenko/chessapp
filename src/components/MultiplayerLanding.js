@@ -1,7 +1,10 @@
-import React from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 const MultiplayerLanding = () => {
+
+    const [gameID, setGameID] = useState('');
+
     const navigate = useNavigate();
     const navBot = () => {
         navigate('/BotPlayLanding');
@@ -9,6 +12,15 @@ const MultiplayerLanding = () => {
     const navLogin = () => {
         navigate('/');
     }
+
+    const navCreate = () => {
+        navigate('/Multiplayer', { state: { createdGame: true, rotate: true } });
+    }
+
+    const navJoin = () => {
+        navigate('/Multiplayer', { state: { createdGame: false, gameID, rotate: false } });
+    }
+
     return (
         <>
             <div
@@ -134,22 +146,25 @@ const MultiplayerLanding = () => {
                                         <button
                                             className="btn btn-primary d-block w-100"
                                             type="button"
+                                            onClick={navCreate}
                                         >
                                             Create game
                                         </button>
                                     </div>
                                     <div className="mb-3">
                                         <input
-                                            className="form-control"
                                             type="text"
                                             placeholder="Game ID"
                                             inputMode="url"
+                                            value={gameID}
+                                            onChange={(e) => { setGameID(e.target.value) }}
                                         />
                                     </div>
                                     <div className="mb-3">
                                         <button
                                             className="btn btn-primary d-block w-100"
                                             type="button"
+                                            onClick={navJoin}
                                         >
                                             Join existing game
                                         </button>
