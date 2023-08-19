@@ -28,6 +28,10 @@ const BotPlay = () => {
         navigate('/MultiplayerLanding');
     }
 
+    const navBotPlayLanding = () => {
+        navigate('/BotPlayLanding');
+    }
+
     //handle game start 
 
     //initiate server connection
@@ -72,7 +76,7 @@ const BotPlay = () => {
                 <ul className="nav nav-pills flex-column text-center nav-flush mb-auto">
                     <li className="nav-item">
                         <a
-                            className="nav-link active link-light py-3 border-bottom rounded-0"
+                            className="nav-link active link-light py-3 border-bottom rounded-0" onClick={navBotPlayLanding}
                             href="#"
                             aria-current="page"
                         >
