@@ -7,7 +7,8 @@ const { Chess } = require('./chessLogic/chess');
 const { ChessEngine } = require('./chessLogic/chessEngine');
 const expressWs = require('express-ws');
 
-mongoose.connect('mongodb://localhost:27018/chessDatabase', {
+
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
