@@ -3,14 +3,26 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-const { Chess } = require('./chessLogic/chess');
-const { ChessEngine } = require('./chessLogic/chessEngine');
+const { Chess } = require('../chessLogic/chess');
+const { ChessEngine } = require('../chessLogic/chessEngine');
 const expressWs = require('express-ws');
+const path = require('path');
 
+require('dotenv').config(); // This will load variables from .env into process.env
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
+})
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build/index.html'));
+});
+
+
+const port = 3002;
+app.listen(port, () => {
+    console.log(`server listening on port ${port}`);
 })
 
 const userSchema = new mongoose.Schema({
@@ -72,6 +84,9 @@ expressWs(app);
 
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, '../build')));
+
 
 app.post('/createAccount', async (req, res) => {
     try {
@@ -182,7 +197,15 @@ app.ws('/joinGame', (ws, req) => {
             gameObject.player1.send(JSON.stringify({ gameID, board: game.board }));
         }
     })
-})
+});
+
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build/index.html'));
+});
+
 
 const port = 3002;
 app.listen(port, () => {
