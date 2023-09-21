@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import ChessBoard from "./ChessBoard";
+import { API, getWsUrl } from "../config/url";
 
 const BotPlay = () => {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ const BotPlay = () => {
     const location = useLocation();
 
     useEffect(() => {
-        let connection = new WebSocket('ws://localhost:3002/chessBot');
+        let connection = new WebSocket(getWsUrl(API.game.chessBot));
         console.log(location.state);
         connection.addEventListener('message', (message) => {
             setDisplay(JSON.parse(message.data).board);

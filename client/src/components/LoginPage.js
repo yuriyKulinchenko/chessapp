@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API } from '../config/url';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -10,8 +11,7 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const url = 'http://localhost:3002/logIn';
-      const response = await axios.post(url, { username, password });
+      const response = await axios.post(API.user.login, { username, password });
       console.log(response.data.status);
       if (response.data.status === 'Logged in') {
         navigate('/BotPlayLanding');
@@ -26,8 +26,7 @@ const LoginPage = () => {
 
   const handleSignUp = async () => {
     try {
-      const url = 'http://localhost:3002/createAccount';
-      const response = await axios.post(url, { username, password });
+      const response = await axios.post(API.user.createAccount, { username, password });
       console.log(response.data.status);
       if (response.data.status === 'New account created') {
         navigate('/BotPlayLanding');

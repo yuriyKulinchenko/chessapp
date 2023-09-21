@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import ChessBoard from "./ChessBoard";
+import { API, getWsUrl } from "../config/url";
 
 const Multiplayer = () => {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ const Multiplayer = () => {
 
         let connection;
         if (location.state.createdGame) {
-            connection = new WebSocket('ws://localhost:3002/createGame');
+            connection = new WebSocket(getWsUrl(API.game.createGame));
             connection.addEventListener('message', (message) => {
                 let data = JSON.parse(message.data);
                 console.log(data.gameID);
@@ -22,7 +23,7 @@ const Multiplayer = () => {
             })
 
         } else {
-            connection = new WebSocket(`ws://localhost:3002/joinGame?gameID=${location.state.gameID}`)
+            connection = new WebSocket(`${getWsUrl(API.game.joinGame)}?gameID=${location.state.gameID}`)
             connection.addEventListener('message', (message) => {
                 if (message.data === 'invalid game id') {
                     navigate('/MultiplayerLanding');
